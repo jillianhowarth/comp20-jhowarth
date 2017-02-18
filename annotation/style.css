@@ -1,0 +1,25 @@
+body {
+	background-color: #FFFAFA;
+}
+
+h1 {
+	font-family: 'Sans Serif', sans-serif;
+	font-size: 50px;
+	font-weight: lighter;
+	text-align: center;
+	margin: 15px;
+}
+
+#lyrics {
+	font-family: 'Sans Serif', sans-serif;
+	font-size: 20px;
+	text-align: center;
+	margin: 15px;
+}
+
+video {
+	width: 60%;
+	margin-right: 20%;
+	margin-left: 20%;
+	border: ridge;
+}
