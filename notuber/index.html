@@ -86,10 +86,15 @@
 				// Update map and go there...
 				map.panTo(me);
 	
+				//My marker icon
+				var myIcon = {
+					url: "icons/me.png",
+					scaledSize: new google.maps.Size(45, 45),
+				}
 				//Marker for my position
 				marker = new google.maps.Marker({
 					position: me,
-					title: "Here I am!"
+					icon: myIcon
 				})
 				marker.setMap(map);
 				google.maps.event.addListener(marker, 'click', function() {
