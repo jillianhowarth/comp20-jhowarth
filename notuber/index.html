@@ -5,7 +5,7 @@
 	<head>
 		<title>Not Uber</title>
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=geometry"></script>.
 		<link rel="stylesheet" href="main.css" />
 		
 		<script>
@@ -61,7 +61,7 @@
 				    	console.log("test");
 				    	console.log(carData["vehicles"][0]);
 				    	console.log("content " + carData["vehicles"][0].lat)
-				    	renderMap(carData)
+				    	renderMapVehicles(carData)
 					}
 					else if(carData["passengers"]){
 				    console.log("test2");
@@ -70,8 +70,17 @@
 				xhr.send("username=" + username + "&lat=" + myLat + "&lng=" + myLng);
 
 			}
-			function renderMap(carData)
+			//renders the map of vehicles when my username is a passenger
+			function renderMapVehicles(carData)
 			{
+				//create a marker for my location
+				createMyMarker(carData);
+				// Create a markers for all the data
+				for(var i = 0; i<carData["vehicles"].length; i++){
+					createMarkerVehicles(carData, i);
+				}
+			}
+			function createMyMarker(carData){
 				me = new google.maps.LatLng(myLat, myLng);
 				
 				// Update map and go there...
@@ -82,21 +91,32 @@
 					position: me,
 					title: "Here I am!"
 				})
-				// Create a marker
-				for(var i = 0; i<carData["vehicles"].length; i++){
-					carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
-					marker = new google.maps.Marker({
-						position: carPos,
-						title: "Other car"
-					});
-					marker.setMap(map);
-				}
-					
-				// Open info window on click of marker
+				marker.setMap(map);
 				google.maps.event.addListener(marker, 'click', function() {
 					infowindow.setContent(marker.title);
 					infowindow.open(map, marker);
 				});
+			}
+			function createMarkerVehicles(carData, i){
+						carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
+						distance = findDist(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
+
+						var marker = new google.maps.Marker({
+							position: carPos,
+							title: carData["vehicles"][i].username + " (" + distance + " mi)"
+						});
+						marker.setMap(map);
+
+						google.maps.event.addListener(marker, 'click', function() {
+						infowindow.setContent(marker.title);
+						infowindow.open(map, marker);
+						});
+			}
+			function findDist(carLat, carLng){
+				distMeters = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(myLat, myLng), new google.maps.LatLng(carLat, carLng))*0.000621371;
+				distMeters = Math.round(distMeters * 100) / 100
+				console.log("Difference: " + distMeters);
+				return distMeters;
 			}
 		</script>
 	</head>
