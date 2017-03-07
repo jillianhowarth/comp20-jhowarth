@@ -34,22 +34,21 @@
 			
 			function getMyLocation() {
 				if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
-					console.log("test 1");
 					navigator.geolocation.getCurrentPosition(function(position) {
-						console.log("test 2");
 						myLat = position.coords.latitude;
 						myLng = position.coords.longitude;
 						console.log(myLat + "," + myLng);
 						accessData();
 						renderMap();
 					});
-					console.log("test3");
 				}
+
 				else {
 					alert("Geolocation is not supported by your web browser.  What a shame!");
 				}
+
 			}
-			/*function accessData() 
+			function accessData() 
 			{
 				var username = "9SO147Xl";
 				var xhr = new XMLHttpRequest();
@@ -57,10 +56,19 @@
 				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 				xhr.onload = function () {
 				    // do something to response
-				    console.log("test "+this.responseText);
+				    carData = JSON.parse(this.responseText);
+				    if(carData["vehicles"]){
+				    	console.log("test");
+				    	console.log(carData["vehicles"][0]);
+				    	console.log("content " + carData["vehicles"][0].lat)
+					}
+					else if(carData["passengers"]){
+				    console.log("test2");
+					}
 				};
 				xhr.send("username=" + username + "&lat=" + myLat + "&lng=" + myLng);
-			}*/
+
+			}
 			function renderMap()
 			{
 				me = new google.maps.LatLng(myLat, myLng);
