@@ -39,7 +39,7 @@
 						myLng = position.coords.longitude;
 						console.log(myLat + "," + myLng);
 						accessData();
-						renderMap();
+						//renderMap();
 					});
 				}
 
@@ -61,6 +61,7 @@
 				    	console.log("test");
 				    	console.log(carData["vehicles"][0]);
 				    	console.log("content " + carData["vehicles"][0].lat)
+				    	renderMap(carData)
 					}
 					else if(carData["passengers"]){
 				    console.log("test2");
@@ -69,19 +70,27 @@
 				xhr.send("username=" + username + "&lat=" + myLat + "&lng=" + myLng);
 
 			}
-			function renderMap()
+			function renderMap(carData)
 			{
 				me = new google.maps.LatLng(myLat, myLng);
 				
 				// Update map and go there...
 				map.panTo(me);
 	
-				// Create a marker
+				//Marker for my position
 				marker = new google.maps.Marker({
 					position: me,
-					title: "Here I Am!"
-				});
-				marker.setMap(map);
+					title: "Here I am!"
+				})
+				// Create a marker
+				for(var i = 0; i<carData["vehicles"].length; i++){
+					carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
+					marker = new google.maps.Marker({
+						position: carPos,
+						title: "Other car"
+					});
+					marker.setMap(map);
+				}
 					
 				// Open info window on click of marker
 				google.maps.event.addListener(marker, 'click', function() {
