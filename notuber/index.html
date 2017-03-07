@@ -100,10 +100,14 @@
 			function createMarkerVehicles(carData, i){
 						carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
 						distance = findDist(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
-
+						var black_car = {
+							url: "icons/black_car.png",
+							scaledSize: new google.maps.Size(40, 20),
+						}
 						var marker = new google.maps.Marker({
 							position: carPos,
-							title: carData["vehicles"][i].username + " (" + distance + " mi)"
+							title: carData["vehicles"][i].username + " (" + distance + " mi)",
+							icon: black_car
 						});
 						marker.setMap(map);
 
