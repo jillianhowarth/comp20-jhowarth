@@ -11,7 +11,7 @@
 		<script>
 			var myLat = 0;
 			var myLng = 0;
-			console.log("send lat/long0 = " + myLat + "," + myLng);			
+
 			var request = new XMLHttpRequest();
 			var me = new google.maps.LatLng(myLat, myLng);
 
@@ -37,9 +37,7 @@
 					navigator.geolocation.getCurrentPosition(function(position) {
 						myLat = position.coords.latitude;
 						myLng = position.coords.longitude;
-						console.log(myLat + "," + myLng);
 						accessData();
-						//renderMap();
 					});
 				}
 
@@ -58,20 +56,13 @@
 				    // do something to response
 				    carData = JSON.parse(this.responseText);
 				    if(carData["vehicles"]){
-				    	console.log("test");
-				    	console.log(carData["vehicles"][0]);
-				    	console.log("content " + carData["vehicles"][0].lat)
 				    	renderMapVehicles(carData, myUsername)
 					}
 					else if(carData["passengers"]){
-				    	console.log("test2");
-				    	console.log(carData["passengers"][0]);
-				    	console.log("content " + carData["passengers"][0].lat)
 				    	renderMapPassengers(carData, myUsername)
 					}
 				};
 				xhr.send("username=" + myUsername + "&lat=" + myLat + "&lng=" + myLng);
-
 			}
 			//renders the map of vehicles when my username is a passenger
 			function renderMapVehicles(carData, myUsername)
@@ -91,7 +82,6 @@
 				// Create a markers for all the data
 				for(var i = 0; i<carData["passengers"].length; i++){
 					createMarkerPassengers(carData, i);
-					console.log("Passenger!");
 				}
 			}
 			function createMyMarker(carData, myUsername){
@@ -158,7 +148,6 @@
 			function findDist(carLat, carLng){
 				distMeters = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(myLat, myLng), new google.maps.LatLng(carLat, carLng))*0.000621371;
 				distMeters = Math.round(distMeters * 100) / 100
-				console.log("Difference: " + distMeters);
 				return distMeters;
 			}
 		</script>
