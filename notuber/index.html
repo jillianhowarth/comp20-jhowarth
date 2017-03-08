@@ -2,158 +2,162 @@
 
 <html>
 
-	<head>
-		<title>Not Uber</title>
-		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=geometry"></script>.
-		<link rel="stylesheet" href="main.css" />
+<head>
+	<title>Not Uber</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true&libraries=geometry"></script>
+	<link rel="stylesheet" href="main.css" />
+
 		
-		<script>
-			var myLat = 0;
-			var myLng = 0;
+	<script>
+		var myLat = 0;
+		var myLng = 0;
 
-			var request = new XMLHttpRequest();
-			var me = new google.maps.LatLng(myLat, myLng);
+		var request = new XMLHttpRequest();
+		var me = new google.maps.LatLng(myLat, myLng);
 
-			var myOptions = {
-						zoom: 13, // The larger the zoom number, the bigger the zoom
-						center: me,
-						mapTypeId: google.maps.MapTypeId.ROADMAP
-					};
-			var map;
-			var marker;
-			var infowindow = new google.maps.InfoWindow();
+		var myOptions = {
+			zoom: 13, // The larger the zoom number, the bigger the zoom
+			center: me,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+		var map;
+		var marker;
+		var infowindow = new google.maps.InfoWindow();
 			
 
 
-			function init()
-			{
-				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-				getMyLocation();
-			}
+		function init()
+		{
+			map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+			getMyLocation();
+		}
 			
-			function getMyLocation() {
-				if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
-					navigator.geolocation.getCurrentPosition(function(position) {
-						myLat = position.coords.latitude;
-						myLng = position.coords.longitude;
-						accessData();
-					});
-				}
-
-				else {
-					alert("Geolocation is not supported by your web browser.  What a shame!");
-				}
-
-			}
-			function accessData() 
-			{
-				var myUsername = "9SO147Xl";
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', "https://defense-in-derpth.herokuapp.com/submit", true);
-				xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-				xhr.onload = function () {
-				    // do something to response
-				    carData = JSON.parse(this.responseText);
-				    if(carData["vehicles"]){
-				    	renderMapVehicles(carData, myUsername)
-					}
-					else if(carData["passengers"]){
-				    	renderMapPassengers(carData, myUsername)
-					}
-				};
-				xhr.send("username=" + myUsername + "&lat=" + myLat + "&lng=" + myLng);
-			}
-			//renders the map of vehicles when my username is a passenger
-			function renderMapVehicles(carData, myUsername)
-			{
-				//create a marker for my location
-				createMyMarker(carData, myUsername);
-				// Create a markers for all the data
-				for(var i = 0; i<carData["vehicles"].length; i++){
-					createMarkerVehicles(carData, i);
-				}
-			}
-			//renders the map of vehicles when my username is a vehicle
-			function renderMapPassengers(carData, myUsername)
-			{
-				//create a marker for my location
-				createMyMarker(carData, myUsername);
-				// Create a markers for all the data
-				for(var i = 0; i<carData["passengers"].length; i++){
-					createMarkerPassengers(carData, i);
-				}
-			}
-			function createMyMarker(carData, myUsername){
-				me = new google.maps.LatLng(myLat, myLng);
-				
-				// Update map and go there...
-				map.panTo(me);
-	
-				//My marker icon
-				var myIcon = {
-					url: "icons/me.png",
-					scaledSize: new google.maps.Size(45, 45),
-				}
-				//Marker for my position
-				marker = new google.maps.Marker({
-					position: me,
-					title: myUsername,
-					icon: myIcon
-				})
-				marker.setMap(map);
-				google.maps.event.addListener(marker, 'click', function() {
-					infowindow.setContent(marker.title);
-					infowindow.open(map, marker);
+		function getMyLocation() {
+			if (navigator.geolocation) { // the navigator.geolocation object is supported on your browser
+				navigator.geolocation.getCurrentPosition(function(position) {
+					myLat = position.coords.latitude;
+					myLng = position.coords.longitude;
+					accessData();
 				});
 			}
-			function createMarkerVehicles(carData, i){
-						carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
-						distance = findDist(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
-						var black_car = {
-							url: "icons/black_car.png",
-							scaledSize: new google.maps.Size(40, 20),
-						}
-						var marker = new google.maps.Marker({
-							position: carPos,
-							title: carData["vehicles"][i].username + " (" + distance + " mi)",
-							icon: black_car
-						});
-						marker.setMap(map);
 
-						google.maps.event.addListener(marker, 'click', function() {
-						infowindow.setContent(marker.title);
-						infowindow.open(map, marker);
-						});
+			else {
+				alert("Geolocation is not supported by your web browser.  What a shame!");
 			}
-			function createMarkerPassengers(carData, i){
-						carPos = new google.maps.LatLng(carData["passengers"][i].lat, carData["passengers"][i].lng);
-						distance = findDist(carData["passengers"][i].lat, carData["passengers"][i].lng);
-						var passengerIcon = {
-							url: "icons/passenger.png",
-							scaledSize: new google.maps.Size(40, 40),
-						}
-						var marker = new google.maps.Marker({
-							position: carPos,
-							title: carData["passengers"][i].username + " (" + distance + " mi)",
-							icon: passengerIcon
-						});
-						marker.setMap(map);
 
-						google.maps.event.addListener(marker, 'click', function() {
-						infowindow.setContent(marker.title);
-						infowindow.open(map, marker);
-						});
+		}
+		function accessData() 
+		{
+			var myUsername = "9SO147Xl";
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', "https://defense-in-derpth.herokuapp.com/submit", true);
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.onload = function () {
+			    carData = JSON.parse(this.responseText);
+			    if(carData["vehicles"]){
+			    	renderMapVehicles(carData, myUsername)
+				}
+				else if(carData["passengers"]){
+			    	renderMapPassengers(carData, myUsername)
+				}
+			};
+			xhr.send("username=" + myUsername + "&lat=" + myLat + "&lng=" + myLng);
+		}
+		//renders the map of vehicles when my username is a passenger
+		function renderMapVehicles(carData, myUsername)
+		{
+			//create a marker for my location
+			createMyMarker(carData, myUsername);
+			// Create a markers for all the data
+			for(var i = 0; i<carData["vehicles"].length; i++){
+				createMarkerVehicles(carData, i);
 			}
-			function findDist(carLat, carLng){
-				distMeters = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(myLat, myLng), new google.maps.LatLng(carLat, carLng))*0.000621371;
-				distMeters = Math.round(distMeters * 100) / 100
-				return distMeters;
+		}
+		//renders the map of vehicles when my username is a vehicle
+		function renderMapPassengers(carData, myUsername)
+		{
+			//create a marker for my location
+			createMyMarker(carData, myUsername);
+			// Create a markers for all the data
+			for(var i = 0; i<carData["passengers"].length; i++){
+				createMarkerPassengers(carData, i);
 			}
-		</script>
-	</head>
+		}
+		function createMyMarker(carData, myUsername){
+			me = new google.maps.LatLng(myLat, myLng);
+				
+			// Update map and go there...
+			map.panTo(me);
 	
-	<body onload="init()">
-		<div id="map_canvas"></div>
-	</body>
+			//My marker icon
+			var myIcon = {
+				url: "icons/me.png",
+				scaledSize: new google.maps.Size(45, 45),
+			}
+			//Marker for my position
+			marker = new google.maps.Marker({
+				position: me,
+				title: myUsername,
+				icon: myIcon
+			})
+			marker.setMap(map);
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(marker.title);
+				infowindow.open(map, marker);
+			});
+		}
+		function createMarkerVehicles(carData, i){
+			carPos = new google.maps.LatLng(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
+			distance = findDist(carData["vehicles"][i].lat, carData["vehicles"][i].lng);
+			var black_car = {
+				url: "icons/black_car.png",
+				scaledSize: new google.maps.Size(40, 20),
+			}
+			var marker = new google.maps.Marker({
+				position: carPos,
+				title: carData["vehicles"][i].username + " (" + distance + " mi)",
+				icon: black_car
+			});
+			marker.setMap(map);
+
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(marker.title);
+				infowindow.open(map, marker);
+			});
+		}
+		function createMarkerPassengers(carData, i){
+			carPos = new google.maps.LatLng(carData["passengers"][i].lat, carData["passengers"][i].lng);
+			distance = findDist(carData["passengers"][i].lat, carData["passengers"][i].lng);
+			var passengerIcon = {
+				url: "icons/passenger.png",
+				scaledSize: new google.maps.Size(40, 40),
+			}
+			var marker = new google.maps.Marker({
+				position: carPos,
+				title: carData["passengers"][i].username + " (" + distance + " mi)",
+				icon: passengerIcon
+			});
+			marker.setMap(map);
+
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.setContent(marker.title);
+				infowindow.open(map, marker);
+			});
+		}
+		function findDist(carLat, carLng){
+			//finds the distance in meters and multiplies it by 0.000621371 to convert it to miles
+			dist = google.maps.geometry.spherical.computeDistanceBetween(new google.maps.LatLng(myLat, myLng), new google.maps.LatLng(carLat, carLng))*0.000621371;
+			dist = Math.round(dist * 100) / 100
+			return dist;
+		}
+	</script>
+</head>
+	
+<body onload="init()">
+	<div id="title">
+		<h1>&ndash; Not Uber &ndash;</h1>
+	</div>
+	<div id="map_canvas"></div>
+</body>
 </html>
