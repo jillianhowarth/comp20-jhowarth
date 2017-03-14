@@ -6,6 +6,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script>
     // Complete this section...
+    $.get("https://messagehub.herokuapp.com/messages.json", function( data ) {
+		$( "#messages" ).replaceWith( "<p>" + data[0].content + " by " + data[0].username + "</p>" + "<p>" + data[1].content + " by " + data[1].username + "</p>" + "<p>" + data[2].content + " by " + data[2].username + "</p>" + "<p>" + data[3].content + " by " + data[3].username + "</p>");
+	});
   </script>
 </head>
 
